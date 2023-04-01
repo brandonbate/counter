@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>Hello</title>
+</head>
+<body>
+<h1>Hello</h1>
+<p id="counter-info">Counter</p><br>
+<button id="send">Send</button>
+
+<script>
+	const socket = new WebSocket('ws://' + window.location.host + '/ws/counter' );
+
+	socket.onmessage = function(e) {
+		const data = JSON.parse(e.data);
+		document.getElementById('counter-info').innerText = data.number;
+	};
+	
+	let send = document.getElementById("send");
+
+	send.addEventListener('click', function(e) {
+		socket.send(JSON.stringify({"message":"click"}));
+	});
+</script>
+</body>
+</html>
