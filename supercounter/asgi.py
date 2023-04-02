@@ -20,12 +20,10 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "supercounter.settings")
 django_asgi_app = get_asgi_application()
 
 from counter.routing import websocket_urlpatterns
-from counter.consumers import GenerateConsumer
 
 application = ProtocolTypeRouter(
     {
         "http": django_asgi_app,
         "websocket": AllowedHostsOriginValidator(AuthMiddlewareStack(URLRouter(websocket_urlpatterns))),
-        "channel": ChannelNameRouter({"generate": GenerateConsumer.as_asgi()})
     }
 )

@@ -5,7 +5,6 @@
 <body>
 <h1>Hello</h1>
 <p id="counter-info">Counter</p><br>
-<button id="send">Send</button>
 
 <script>
 	const socket = new WebSocket('ws://' + window.location.host + '/ws/counter' );
@@ -15,11 +14,9 @@
 		document.getElementById('counter-info').innerText = data.number;
 	};
 	
-	let send = document.getElementById("send");
-
-	send.addEventListener('click', function(e) {
-		socket.send(JSON.stringify({"message":"click"}));
-	});
+	socket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+	};
 </script>
 </body>
 </html>
