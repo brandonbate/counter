@@ -5,7 +5,7 @@
 <body>
 <h1>Hello</h1>
 <p id="counter-info">Counter</p><br>
-
+<button id="skip">Skip 10</button>
 <script>
 	const socket = new WebSocket('ws://' + window.location.host + '/ws/counter' );
 
@@ -15,8 +15,14 @@
 	};
 	
 	socket.onclose = function(e) {
-            console.error('Chat socket closed unexpectedly');
+		console.error('Chat socket closed unexpectedly');
 	};
+
+	const button = document.getElementById('skip');
+	button.addEventListener('click', function(e) {
+		socket.send(JSON.stringify({'action': 'skip'}))
+	});
+
 </script>
 </body>
 </html>

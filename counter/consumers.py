@@ -1,11 +1,10 @@
 import json
+import redis
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.consumer import SyncConsumer
 from counter.tasks import count
 from counter.models import AvailablePlayer
 from asgiref.sync import sync_to_async
-import random
-import string
 
 def find_available_player():
     available_player = AvailablePlayer.objects.first()
@@ -40,6 +39,7 @@ class CountConsumer(AsyncWebsocketConsumer):
             await self.channel_layer.send(available_player, new_counter_data);
             await self.channel_layer.send(self.channel_name, new_counter_data);
 
+            # We assign one of the players to be a host. They are in charge of killing the celery task.
             self.host = True
             self.task = count.delay()
 
@@ -54,13 +54,17 @@ class CountConsumer(AsyncWebsocketConsumer):
 
         await self.channel_layer.group_discard("counter", self.channel_name)
 
-    # Receive message from WebSocket
-    async def receive(self, text_data):
-        pass
-
     async def start(self, data):
+        self.r = redis.Redis()
         await self.channel_layer.group_add("counter", self.channel_name)
 
-    # Receive message from channel layer
+    # Receive message from channel layer emitted by the celery task.
     async def number(self, event):
+        # Relays number back to client
         await self.send(text_data=json.dumps({"number": event["value"]}))
+
+    # Receive message from WebSocket
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        # Passes the button action to the Redis server to be handled by the celery task.
+        self.r.rpush('action',data['action'])
