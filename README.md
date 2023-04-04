@@ -1,4 +1,4 @@
-# counter
+# Counter Example (pun intended!)
 
 This example is a Django application. I made this application to serve as a template for creating a live, multi-player web game.
 The application uses Daphne 4.0 and Channels 3.4.1 for websocket communication via consumers (Channels 4.0.0 has been glitchy for me,
@@ -39,7 +39,7 @@ pip install "channels-redis==3.4.1"
 pip install "daphne==4.0.0"
 pip install celery django-celery-results redis
 ```
-Ignore the warnings you get after install Daphne.
+Ignore the warnings you get after installing Daphne.
 
 To run the game, you will need to open up two terminals. In one terminal, run:
 ```
